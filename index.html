@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<h1 class="text-primary text-center display-4">Project Management</h1>
+
+<div class="container mb-3">
+    <input type="text" id="searchkey" class="form-control w-25 d-inline" placeholder="Search project...">
+    <button class="btn btn-primary" onclick="searchProject()">Search</button>
+</div>
+
+<div class="container" style="height: 600px; overflow-y: auto;">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Project Title</th>
+                <th>Department</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody id="projectRows"></tbody>
+    </table>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
