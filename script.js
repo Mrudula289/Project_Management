@@ -67,3 +67,26 @@ function searchProject() {
 
     renderData(filtered);
 }
+
+function filterProject() {
+    const value = document
+        .getElementById("filterType")
+        .value
+        .toLowerCase()
+        .trim();
+
+    currentPage = 1; // reset pagination
+
+    if (value === "") {
+        filteredData = [];
+        renderData(allProjects);
+        return;
+    }
+
+    filteredData = allProjects.filter(p =>
+        p.priority.toLowerCase() === value ||
+        p.status.toLowerCase() === value
+    );
+
+    renderData(filteredData);
+}

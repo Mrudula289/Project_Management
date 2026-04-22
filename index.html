@@ -14,6 +14,16 @@
 <div class="container mb-3">
     <input type="text" id="searchkey" class="form-control w-25 d-inline" placeholder="Search project...">
     <button class="btn btn-primary" onclick="searchProject()">Search</button>
+    <select id="filterType" class="form-select w-25 d-inline">
+    <option value="">Filter By</option>
+    <option value="High">High Priority</option>
+    <option value="Medium">Medium Priority</option>
+    <option value="Low">Low Priority</option>
+    <option value="Completed">Completed</option>
+    <option value="In Progress">In Progress</option>
+</select>
+
+<button class="btn btn-primary" onclick="filterProject()">Filter</button>
 </div>
 
 <div class="container" style="height: 600px; overflow-y: auto;">
