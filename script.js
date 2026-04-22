@@ -1,23 +1,25 @@
 let allProjects = [];
+let filteredData = [];
+let currentPage = 1;
+const rowsPerPage = 10;
 
-
+// ================= FETCH DATA =================
 async function fetchproject() {
     try {
         const res = await fetch('https://674e84f1635bad45618eebc1.mockapi.io/api/v1/projects');
         const data = await res.json();
 
-        allProjects = data;       
-        renderData(allProjects); 
+        allProjects = data;
+        filteredData = [];
+        paginate(1); // ✅ always start with pagination
     } catch (err) {
         console.log(err);
     }
 }
 
-
 document.addEventListener('DOMContentLoaded', fetchproject);
 
-
-// Render Table
+// ================= RENDER TABLE =================
 function renderData(projects) {
     const table = document.getElementById("projectRows");
 
@@ -33,7 +35,7 @@ function renderData(projects) {
 
     table.innerHTML = projects.map((p, i) => `
         <tr>
-            <td>${i + 1}</td>
+            <td>${(currentPage - 1) * rowsPerPage + i + 1}</td>
             <td>${p.ProjectName}</td>
             <td>${p.Department}</td>
             <td>${p.priority}</td>
@@ -44,8 +46,7 @@ function renderData(projects) {
     `).join('');
 }
 
-
-
+// ================= SEARCH =================
 function searchProject() {
     const value = document
         .getElementById("searchkey")
@@ -54,20 +55,22 @@ function searchProject() {
         .trim();
 
     if (value === "") {
-        renderData(allProjects);
+        filteredData = [];
+        paginate(1);
         return;
     }
 
-    const filtered = allProjects.filter(p =>
+    filteredData = allProjects.filter(p =>
         p.ProjectName.toLowerCase().includes(value) ||
         p.Department.toLowerCase().includes(value) ||
         p.priority.toLowerCase().includes(value) ||
         p.status.toLowerCase().includes(value)
     );
 
-    renderData(filtered);
+    paginate(1);
 }
 
+// ================= FILTER =================
 function filterProject() {
     const value = document
         .getElementById("filterType")
@@ -75,11 +78,9 @@ function filterProject() {
         .toLowerCase()
         .trim();
 
-    currentPage = 1; // reset pagination
-
     if (value === "") {
         filteredData = [];
-        renderData(allProjects);
+        paginate(1);
         return;
     }
 
@@ -88,5 +89,57 @@ function filterProject() {
         p.status.toLowerCase() === value
     );
 
-    renderData(filteredData);
+    paginate(1);
+}
+
+// ================= PAGINATION =================
+function paginate(page) {
+    const data = filteredData.length > 0 ? filteredData : allProjects;
+    const totalPages = Math.ceil(data.length / rowsPerPage);
+
+    currentPage = page;
+
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    renderData(data.slice(start, end));
+    createPaginationButtons(totalPages);
+}
+
+// ================= PAGINATION BUTTONS =================
+function createPaginationButtons(totalPages) {
+    const container = document.getElementById("pagination");
+    container.innerHTML = "";
+
+    // ===== PREVIOUS BUTTON =====
+    container.innerHTML += `
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="event.preventDefault(); paginate(${currentPage - 1})">
+                Previous
+            </a>
+        </li>
+    `;
+
+    // ===== PAGE NUMBERS =====
+    for (let i = 1; i <= totalPages; i++) {
+        container.innerHTML += `
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="event.preventDefault(); paginate(${i})">
+                    ${i}
+                </a>
+            </li>
+        `;
+    }
+
+    // ===== NEXT BUTTON =====
+    container.innerHTML += `
+        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="event.preventDefault(); paginate(${currentPage + 1})">
+                Next
+            </a>
+        </li>
+    `;
 }
